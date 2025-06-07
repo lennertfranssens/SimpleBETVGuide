@@ -18,7 +18,8 @@ struct TVShowDetailView: View {
                 Section(header: Text("Program Info")) {
                     Text(show.title).bold()
                     Text("Channel: \(show.channelName)")
-                    Text("Time: \(timeRange)")
+                    Text("Start: \(formattedDate(show.startTime))")
+                    Text("End: \(formattedDate(show.endTime))")
                     if let ep = show.episode {
                         Text("Episode: \(ep)")
                     }
@@ -49,5 +50,12 @@ struct TVShowDetailView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return "\(formatter.string(from: show.startTime)) - \(formatter.string(from: show.endTime))"
+    }
+
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
