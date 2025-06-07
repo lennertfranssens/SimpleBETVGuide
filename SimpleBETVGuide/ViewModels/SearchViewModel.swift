@@ -46,21 +46,22 @@ class SearchViewModel: ObservableObject {
 
         var predicates: [NSPredicate] = []
 
-        if !text.isEmpty {
+        if !text.trimmingCharacters(in: .whitespaces).isEmpty {
             predicates.append(NSCompoundPredicate(orPredicateWithSubpredicates: [
                 NSPredicate(format: "title CONTAINS[cd] %@", text),
-                NSPredicate(format: "desc CONTAINS[cd] %@", text)
+                NSPredicate(format: "descriptionText != nil AND descriptionText CONTAINS[cd] %@", text)
             ]))
         }
 
-        if let channel = selectedChannel {
+        if let channel = selectedChannel, !channel.isEmpty {
             predicates.append(NSPredicate(format: "channel.name == %@", channel))
         }
 
         if let date = selectedDate {
             let start = Calendar.current.startOfDay(for: date)
-            let end = Calendar.current.date(byAdding: .day, value: 1, to: start)!
-            predicates.append(NSPredicate(format: "startTime >= %@ AND startTime < %@", start as NSDate, end as NSDate))
+            if let end = Calendar.current.date(byAdding: .day, value: 1, to: start) {
+                predicates.append(NSPredicate(format: "startTime >= %@ AND startTime < %@", start as NSDate, end as NSDate))
+            }
         }
 
         if !predicates.isEmpty {
